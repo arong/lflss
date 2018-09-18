@@ -1,16 +1,33 @@
 <!-- 投票入口页面 -->
 <template>
   <div class="com com-entry-vote_entry">
-    <vote-code />
+    <!-- <vote-code /> -->
+    <component :is="childComponent"></component>
   </div>
 </template>
 
 <script>
-import VoteCode from "@/components/vote/VodeCode.vue";
+
+import { mapState, mapMutations } from 'vuex';
 
 export default {
-  components: {
-    VoteCode
+  data() {
+    return {
+      components: {
+        voteCode: () => import("@/components/vote/VodeCode.vue"),
+        vote: () => import("@/components/vote/Vote.vue"),
+      }
+    };
+  },
+
+  computed: {
+    ...mapState({
+      votePage: state => state.votePage
+    }),
+
+    childComponent() {
+      return this.components[this.votePage];
+    }
   }
 }
 </script>

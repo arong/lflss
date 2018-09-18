@@ -1,7 +1,7 @@
 <!-- 输入投票码页面 -->
 <template>
   <div class="com com-vote-vote_code">
-    <div class="vote-form">
+    <div class="vote-form vote-container">
       <div class="form-wr">
         <el-row>
           <el-col :span="8">
@@ -26,7 +26,10 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
 import Footer from "./Footer.vue";
+
+import utils from "@/utils/index.js";
 export default {
   data() {
     return {
@@ -38,8 +41,19 @@ export default {
   },
 
   methods: {
+    ...mapMutations({
+      setState: 'setState'
+    }),
     onStartVote() {
       alert('投票码: ' + this.voteCode);
+
+      // TODO: 投票码有效判断
+      if (this.voteCode) {
+        this.setState({
+          key: 'votePage',
+          val: 'vote'
+        });
+      }
     }
   }
 };
@@ -52,7 +66,7 @@ export default {
   }
 
   .form-wr {
-    margin-top: 300px;
+    padding-top: 300px;
   }
 
   .submit {
