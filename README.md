@@ -1,6 +1,6 @@
 # lflss
 
-> An web app for Lanzhou Foreign Language Secondary School.
+> A web app for Lanzhou Foreign Language Secondary School.
 
 build with vue-cli 2.9.6
 
