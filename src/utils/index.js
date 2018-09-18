@@ -38,6 +38,17 @@ function isEmptyObject(o) {
 }
 
 /**
+ * 生成所有元素值都为value的数组, 长度为len
+ * @param {} len
+ * @param {*} initVAlue
+ */
+function genArr(len = 10, initVAlue = false) {
+  return Array.from({ length: len }).map(v => {
+    return initVAlue;
+  });
+}
+
+/**
  * vuex通用mutation, 如果有特殊的可以自己在mutations中写
  */
 function setState(state, { key, val } = {}) {
@@ -79,5 +90,6 @@ export default {
   type,
   isArray,
   isEmptyObject,
+  genArr,
   setState
 };

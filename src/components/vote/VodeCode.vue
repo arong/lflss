@@ -29,7 +29,6 @@
 import { mapState, mapMutations } from 'vuex';
 import Footer from "./Footer.vue";
 
-import utils from "@/utils/index.js";
 export default {
   data() {
     return {

@@ -32,6 +32,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+  .vote-container {
+    height: calc(100vh - 60px);
+  }
 </style>

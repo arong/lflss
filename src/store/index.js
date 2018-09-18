@@ -7,7 +7,7 @@ import utils from '@/utils/index.js';
 
 export default new Vuex.Store({
   state: {
-    votePage: 'voteCode', // 投票开始为输入投票码页面
+    votePage: 'vote', // 投票开始为输入投票码页面
   },
 
   mutations: {
