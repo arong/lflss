@@ -9,6 +9,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex';
+import utils from "@/utils/index.js";
 
 export default {
   data() {
@@ -28,6 +29,11 @@ export default {
     childComponent() {
       return this.components[this.votePage];
     }
+  },
+
+  created() {
+    // 测试调用接口
+    utils.simplePost('/');
   }
 }
 </script>

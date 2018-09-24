@@ -1,3 +1,7 @@
+import { _moduleExtend } from "./_privateModule.js";
+import * as http from "./http.js";
+import * as object from "./object.js";
+import * as is from "./is.js";
 
 let emptyArr = [],
   emptyObj = {},
@@ -24,19 +28,6 @@ function type(input) {
   return typeMatch ? typeMatch[1].toLowerCase() : 'null';
 }
 
-function isArray(arr) {
-  return arr && (Array.isArray ? Array.isArray(arr) : type(arr) === 'array');
-}
-
-function isEmptyObject(o) {
-  let p;
-  for (p in o) {
-    return false;
-  }
-
-  return true;
-}
-
 /**
  * 生成所有元素值都为value的数组, 长度为len
  * @param {} len
@@ -60,7 +51,7 @@ function setState(state, { key, val } = {}) {
   let _val = null;
   let store = state[key];
 
-  if (store && val && isArray(store) && isArray(val)) {
+  if (store && val && is.isArray(store) && is.isArray(val)) {
     _val = val;
   }
 
@@ -72,7 +63,7 @@ function setState(state, { key, val } = {}) {
     _val = {};
 
     // _val = _.merge({}, store, val);
-    if (isEmptyObject(val)) {
+    if (is.isEmptyObject(val)) {
       _val = {};
     } else {
       _val = Object.assign({}, store, val);
@@ -85,11 +76,24 @@ function setState(state, { key, val } = {}) {
   state[key] = _val;
 }
 
+var exp = {
+  runFn,
+  type,
+  genArr,
+  setState,
+  ...http,
+  ...is,
+  ...object
+};
+
+console.log('exp', exp);
+
 export default {
   runFn,
   type,
-  isArray,
-  isEmptyObject,
   genArr,
-  setState
-};
+  setState,
+  ...http,
+  ...is,
+  ...object
+};;
