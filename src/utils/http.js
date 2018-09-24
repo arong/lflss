@@ -19,13 +19,14 @@ function http(options) {
     // add to request body
     data: {},
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Content-Type': 'application/json; charset=UTF-8',
     }
   };
 
   options = object.extend(defaults, options);
 
-  options.data = Qs.stringify(options.data);
+  // options.data = Qs.stringify(options.data);
+  options.data = JSON.stringify(options.data);
 
   // 如果是post请求, 删除查询字符串, 一般都是这样,
   // 如果有另外的情况, 直接在url上拼

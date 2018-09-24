@@ -33,7 +33,10 @@ export default {
 
   created() {
     // 测试调用接口
-    utils.simplePost('/');
+    utils.simplePost('/', {
+      name: 'gerrylon',
+      age: 18
+    });
   }
 }
 </script>
