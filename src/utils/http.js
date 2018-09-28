@@ -2,7 +2,7 @@ import axios from 'axios';
 import Qs from 'qs';
 import * as object from "./object.js";
 
-import { PROXY_TABLE_PREIFIX } from "@/config/index.js";
+import { PROXY_TABLE_PREFIX } from "@/config/index.js";
 
 /**
  * 全局http调用
@@ -51,7 +51,7 @@ function http(options) {
  */
 async function simplePost(url, data, pathIsUrl = true) {
   let res = await http({
-    url: pathIsUrl ? PROXY_TABLE_PREIFIX + url : url,
+    url: pathIsUrl ? PROXY_TABLE_PREFIX + url : url,
     method: 'POST',
     data: data
   });

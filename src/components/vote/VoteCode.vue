@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations } from "vuex";
 import Footer from "./Footer.vue";
 
 export default {
@@ -41,16 +41,16 @@ export default {
 
   methods: {
     ...mapMutations({
-      setState: 'setState'
+      setState: "setState"
     }),
     onStartVote() {
-      alert('投票码: ' + this.voteCode);
+      alert("投票码: " + this.voteCode);
 
       // TODO: 投票码有效判断
       if (this.voteCode) {
         this.setState({
-          key: 'votePage',
-          val: 'vote'
+          key: "votePage",
+          val: "vote"
         });
       }
     }

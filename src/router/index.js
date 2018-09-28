@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import VoteEntry from "@/components/entry/VoteEntry.vue";
+import VoteCode from "@/components/vote/VoteCode.vue";
 
 Vue.use(Router)
 
@@ -10,7 +9,7 @@ export default new Router({
     {
       path: '/',
       name: 'vote',
-      component: VoteEntry
+      component: VoteCode
     },
   ]
 })

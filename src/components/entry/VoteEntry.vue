@@ -7,16 +7,15 @@
 </template>
 
 <script>
-
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations } from "vuex";
 import utils from "@/utils/index.js";
 
 export default {
   data() {
     return {
       components: {
-        voteCode: () => import("@/components/vote/VodeCode.vue"),
-        vote: () => import("@/components/vote/Vote.vue"),
+        voteCode: () => import("@/components/vote/VoteCode.vue"),
+        vote: () => import("@/components/vote/Vote.vue")
       }
     };
   },
@@ -33,16 +32,16 @@ export default {
 
   created() {
     // 测试调用接口
-    utils.simplePost('/', {
-      name: 'gerrylon',
+    utils.simplePost("/", {
+      name: "gerrylon",
       age: 18
     });
   }
-}
+};
 </script>
 
 <style lang="scss">
-  .vote-container {
-    height: calc(100vh - 60px);
-  }
+.vote-container {
+  height: calc(100vh - 60px);
+}
 </style>
