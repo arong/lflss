@@ -15,7 +15,8 @@ export default {
     return {
       components: {
         voteCode: () => import("@/components/vote/VoteCode.vue"),
-        vote: () => import("@/components/vote/Vote.vue")
+        vote: () => import("@/components/vote/Vote.vue"),
+        voteSuccess: () => import("@/components/vote/VoteSuccess.vue"),
       }
     };
   },

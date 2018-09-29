@@ -36,7 +36,9 @@ function http(options) {
   }
 
   try {
-    return axios(options);
+    return axios(options).then(res => {
+      return res.data; // axios会多封闭一层, res.data才是真正的数据
+    });
   } catch(err) {
     return Promise.resolve({
       code: -100, // 全局通用错误处理
@@ -54,8 +56,8 @@ function http(options) {
 async function simplePost(url, data, pathIsUrl = false) {
   let res = await http({
     url: pathIsUrl ? PROXY_TABLE_PREFIX + url : url,
-    method: 'GET',
-    params: params
+    method: 'POST',
+    data: data
   });
   return res;
 }

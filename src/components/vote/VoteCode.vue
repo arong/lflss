@@ -29,7 +29,9 @@
 import { mapState, mapMutations } from "vuex";
 import Footer from "./Footer.vue";
 import utils from "@/utils/index.js";
+
 import requestMixin from "@/mixin/request.js";
+import routeMixin from "./route.js";
 import * as CONFIG from "@/config/index.js";
 
 export default {
@@ -42,42 +44,50 @@ export default {
   components: {
     Footer
   },
-  mixins: [requestMixin],
+  mixins: [requestMixin, routeMixin],
   methods: {
-    ...mapMutations({
-      setState: "setState"
-    }),
     onStartVote() {
       this.voteCode = utils.trim(this.voteCode);
       if (!this.voteCode) {
-        return alert('投票码不能为空');
+        return alert("投票码不能为空");
       }
 
-      // 避免重复请求
-      if (this.isSendingRequest) {
-        return;
-      }
-      this._setSending(true);
       this.handleVoteVode();
     },
 
-    handleVoteVode() {
+    async handleVoteVode() {
+      // 避免重复请求
+      if (this._isSending()) {
+        return;
+      }
+      this._setSending(true);
       // 请求URL
-      utils.simpleGet(`${CONFIG.HOST}/api/v1/dean/vote/` + this.voteCode)
-        .then(res => {
-          this._setSending(false);
-          if (res.data.code != 0) {
-            alert("请输入正确的投票码");
-          } else if (res.data.data.length == 0) {
-            alert("目前尚无您可以投票的老师");
-          } else {
-            // 跳转到投票页面
-            this.setState({
-              key: 'votePage',
-              val: 'vote'
-            });
-          }
-        });
+      let res = await utils.simpleGet(
+        `${CONFIG.HOST}/api/v1/dean/vote/` + this.voteCode
+      );
+      this._setSending(false);
+
+      if (res.code != 0) {
+        return alert("请输入正确的投票码");
+      }
+
+      let teachers = res.data.Teachers;
+
+      if (!teachers || !teachers.length) {
+        return alert("目前尚无您可以投票的老师");
+      }
+
+      this.route("vote"); // 跳转到投票页面
+
+      this.setState({
+        key: "voteCode",
+        val: this.voteCode
+      });
+
+      this.setState({
+        key: "teachers",
+        val: teachers
+      });
     }
   }
 };
