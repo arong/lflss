@@ -2,7 +2,7 @@
 <template>
   <div class="com com-vote-vote_success">
     <div class="vote-form vote-container">
-      <h1 style="text-align: center;">投票成功</h1>
+      <h1 style="text-align: center;">您的评分已经提交, 谢谢</h1>
     </div>
 
     <!-- 这里使用<footer />会和h5自带的footer冲突,所以用大写 -->
@@ -12,8 +12,7 @@
 
 <script>
 export default {
-  data() {
-  },
+  data() {}
 };
 </script>
 

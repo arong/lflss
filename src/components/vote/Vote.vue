@@ -129,7 +129,7 @@ export default {
     },
 
     async handleVote(data) {
-      console.log('handleVote', data);
+      console.log("handleVote", data);
 
       if (this._isSending()) {
         return;
@@ -137,19 +137,17 @@ export default {
 
       this._setSending(true);
 
-      let res = await utils.simplePost(`${CONFIG.HOST}/api/v1/dean/vote`, {
-        data: data
-      });
+      let res = await utils.simplePost(`${CONFIG.HOST}/api/v1/dean/vote`, data);
 
       this._setSending(false);
 
       if (res.code === 0) {
-        alert('投票成功');
+        alert("投票成功");
 
         // 跳转
-        this.route('voteSuccess');
+        this.route("voteSuccess");
       } else {
-        alert(res.msg || '请求失败');
+        alert(res.msg || "请求失败");
       }
     },
 
