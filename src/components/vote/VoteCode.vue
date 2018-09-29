@@ -30,6 +30,7 @@ import { mapState, mapMutations } from "vuex";
 import Footer from "./Footer.vue";
 import utils from "@/utils/index.js";
 import requestMixin from "@/mixin/request.js";
+import * as CONFIG from "@/config/index.js";
 
 export default {
   data() {
@@ -62,7 +63,7 @@ export default {
 
     handleVoteVode() {
       // 请求URL
-      utils.simpleGet("http://localhost/api/v1/dean/vote/" + this.voteCode)
+      utils.simpleGet(`${CONFIG.HOST}/api/v1/dean/vote/` + this.voteCode)
         .then(res => {
           this._setSending(false);
           if (res.data.code != 0) {

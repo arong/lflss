@@ -31,7 +31,7 @@ function http(options) {
   // 如果有另外的情况, 直接在url上拼
   if (/post/i.test(options.method)) {
     delete options.params;
-  } else if (/get/i.get(options.method)) {
+  } else if (/get/i.test(options.method)) {
     delete options.data;
   }
 
@@ -66,7 +66,7 @@ async function simplePost(url, data, pathIsUrl = false) {
 async function simpleGet(url, params, pathIsUrl = false) {
   let res = await http({
     url: pathIsUrl ? PROXY_TABLE_PREFIX + url : url,
-    method: 'POST',
+    method: 'GET',
     params: params
   });
   return res;
