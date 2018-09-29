@@ -10,7 +10,7 @@
           <el-col :span="8">
             <div class="form-group submit">
               <el-input v-model="voteCode" @keyup.enter.native="onStartVote" placeholder="请输入投票码" ></el-input>
-              <el-button type="primary" @click="onStartVote" :disabled="!voteCode">开始评分</el-button>
+              <el-button type="primary" @click="onStartVote" :disabled="!voteCode || isSendingRequest">开始评分</el-button>
             </div>
           </el-col>
           <el-col :span="8">
@@ -28,7 +28,8 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import Footer from "./Footer.vue";
-import axios from "axios";
+import utils from "@/utils/index.js";
+import requestMixin from "@/mixin/request.js";
 
 export default {
   data() {
@@ -40,29 +41,40 @@ export default {
   components: {
     Footer
   },
-
+  mixins: [requestMixin],
   methods: {
     ...mapMutations({
       setState: "setState"
     }),
     onStartVote() {
-      this.voteCode = this.voteCode.trim();
-      console.log(this.voteCode + "|");
-      if (this.voteCode == "") {
-        return;
+      this.voteCode = utils.trim(this.voteCode);
+      if (!this.voteCode) {
+        return alert('投票码不能为空');
       }
 
+      // 避免重复请求
+      if (this.isSendingRequest) {
+        return;
+      }
+      this._setSending(true);
+      this.handleVoteVode();
+    },
+
+    handleVoteVode() {
       // 请求URL
-      axios
-        .get("http://localhost/api/v1/dean/vote/" + this.voteCode)
+      utils.simpleGet("http://localhost/api/v1/dean/vote/" + this.voteCode)
         .then(res => {
-          console.log(res);
+          this._setSending(false);
           if (res.data.code != 0) {
             alert("请输入正确的投票码");
           } else if (res.data.data.length == 0) {
             alert("目前尚无您可以投票的老师");
           } else {
-            // 准备跳转到另外一个页面
+            // 跳转到投票页面
+            this.setState({
+              key: 'votePage',
+              val: 'vote'
+            });
           }
         });
     }

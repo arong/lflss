@@ -2,6 +2,7 @@ import { _moduleExtend } from "./_privateModule.js";
 import * as http from "./http.js";
 import * as object from "./object.js";
 import * as is from "./is.js";
+import * as strings from "./strings.js";
 
 let emptyArr = [],
   emptyObj = {},
@@ -76,17 +77,6 @@ function setState(state, { key, val } = {}) {
   state[key] = _val;
 }
 
-var exp = {
-  runFn,
-  type,
-  genArr,
-  setState,
-  ...http,
-  ...is,
-  ...object
-};
-
-console.log('exp', exp);
 
 export default {
   runFn,
@@ -95,5 +85,6 @@ export default {
   setState,
   ...http,
   ...is,
-  ...object
+  ...object,
+  ...strings
 };;
