@@ -15,6 +15,7 @@
                 </el-select>
                 <el-input v-model="select_word" placeholder="手机号" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
+                <el-button type="primary" @click="handleCreate">新建</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -161,6 +162,18 @@ export default {
     },
     filterTag(value, row) {
       return row.tag === value;
+    },
+    handleCreate() {
+      // this.idx = index;
+      // const item = this.tableData[index];
+      this.form = {
+        name: '',
+        sex: 0,
+        mobile: '',
+        date: '',
+        address: ''
+      };
+      this.editVisible = true;
     },
     handleEdit(index, row) {
       this.idx = index;
