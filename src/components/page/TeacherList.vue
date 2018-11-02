@@ -21,7 +21,9 @@
                 <el-table-column prop="name" label="姓名" width="120"> </el-table-column>
                 <el-table-column prop="sex" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
-                <el-table-column prop="date" label="日期" sortable width="150"> </el-table-column>
+                <el-table-column prop="subject" label="科目" width="120"> </el-table-column>
+                <el-table-column prop="date" label="出生年月" sortable width="150"> </el-table-column>
+                <el-table-column prop="age" label="年龄" sortable width="150"> </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
@@ -51,7 +53,7 @@
                 <el-form-item label="地址">
                     <el-input v-model="form.address"></el-input>
                 </el-form-item>
-                <el-form-item label="日期">
+                <el-form-item label="出生年月">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form>
@@ -84,6 +86,7 @@ export default {
           mobile: "12345678910",
           sex: 1,
           name: "鱼老师",
+          subject: "地理",
           address: "兰州市"
         }
       ],
