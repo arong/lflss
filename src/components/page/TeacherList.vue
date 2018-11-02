@@ -23,7 +23,7 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="姓名" width="120"> </el-table-column>
-                <el-table-column prop="sex" label="性别" width="120"> </el-table-column>
+                <el-table-column prop="sexText" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
                 <el-table-column prop="subject" label="科目" width="120"> </el-table-column>
                 <el-table-column prop="dat" label="出生年月" sortable width="150"> </el-table-column>
@@ -118,7 +118,11 @@ export default {
         "0": "未知",
         "1": "男",
         "2": "女"
-      }
+      },
+
+      filter_phone: "",
+      filter_grade: "",
+      filter_index: "",
     };
   },
   created() {
@@ -127,6 +131,10 @@ export default {
   computed: {
     data() {
       return this.tableData.filter(d => {
+
+        // sex取文字
+        d.sexText = this.sexEnum[d.sex];
+
         let is_del = false;
         for (let i = 0; i < this.del_list.length; i++) {
           if (d.name === this.del_list[i].name) {
