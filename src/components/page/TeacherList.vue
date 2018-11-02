@@ -15,7 +15,7 @@
                 </el-select>
                 <el-input v-model="select_word" placeholder="手机号" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" @click="handleCreate">新建</el-button>
+                <el-button type="primary" @click="handleCreate" class='new-button'>新建</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -34,33 +34,36 @@
                 </el-table-column>
             </el-table>
             <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total=this.tableData.length>
                 </el-pagination>
             </div>
         </div>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="50px">
-                <el-form-item label="姓名">
-                    <el-input v-model="form.name"></el-input>
+        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+            <el-form ref="form" :model="form" :rules="rules" label-width="50px">
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model.trim="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="性别">
-                    <el-input v-model="form.sex"></el-input>
+                <el-form-item label="性别" prop="sex">
+                    <el-input v-model.trim="form.sex"></el-input>
                 </el-form-item>
-                <el-form-item label="手机">
-                    <el-input v-model="form.mobile"></el-input>
+                <el-form-item label="手机" prop="mobile">
+                    <el-input v-model.trim="form.mobile"></el-input>
+                </el-form-item>
+                <el-form-item label="教授科目" prop="subject">
+                    <el-input v-model.trim="form.subject"></el-input>
                 </el-form-item>
                 <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
+                    <el-input v-model.trim="form.address"></el-input>
                 </el-form-item>
                 <el-form-item label="出生年月">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model.trim="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
+                <el-button type="primary" @click="saveEdit(form.opType)">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -106,7 +109,8 @@ export default {
         address: "",
         date: ""
       },
-      idx: -1
+      idx: -1,
+      title: ""
     };
   },
   created() {
@@ -133,6 +137,12 @@ export default {
         }
       });
     }
+  },
+  rules: {
+    name: [{ required: true, message: "姓名为必填项", trigger: "blur" }],
+    sex: [{ required: true, message: "请输入", trigger: "blur" }],
+    subject: [{ required: true, message: "请输入", trigger: "blur" }],
+    mobile: [{ required: true, message: "请输入", trigger: "blur" }]
   },
   methods: {
     // 分页导航
@@ -164,18 +174,19 @@ export default {
       return row.tag === value;
     },
     handleCreate() {
-      // this.idx = index;
-      // const item = this.tableData[index];
+      this.title = "新建";
       this.form = {
-        name: '',
+        name: "",
         sex: 0,
-        mobile: '',
-        date: '',
-        address: ''
+        mobile: "",
+        date: "",
+        address: "",
+        opType: "create"
       };
       this.editVisible = true;
     },
     handleEdit(index, row) {
+      this.title = "编辑";
       this.idx = index;
       const item = this.tableData[index];
       this.form = {
@@ -183,7 +194,8 @@ export default {
         sex: item.sex,
         mobile: item.mobile,
         date: item.date,
-        address: item.address
+        address: item.address,
+        opType: "edit"
       };
       this.editVisible = true;
     },
@@ -205,10 +217,17 @@ export default {
       this.multipleSelection = val;
     },
     // 保存编辑
-    saveEdit() {
-      this.$set(this.tableData, this.idx, this.form);
+    saveEdit(opType) {
+      if (opType == "edit") {
+        this.$set(this.tableData, this.idx, this.form);
+        this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+      } else if (opType == "create") {
+        if (this.form.name) {
+        }
+        this.tableData.push(this.form);
+        this.$message.success(`添加成功`);
+      }
       this.editVisible = false;
-      this.$message.success(`修改第 ${this.idx + 1} 行成功`);
     },
     // 确定删除
     deleteRow() {
