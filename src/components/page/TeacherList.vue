@@ -8,12 +8,15 @@
         <div class="container">
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-                <el-select v-model="select_cate" placeholder="筛选性别" class="handle-select mr10">
+                <el-select v-model="filter_sex" placeholder="筛选性别" class="handle-select mr10">
                     <el-option key="0" label="全部" value=0></el-option>
                     <el-option key="1" label="男" value=1></el-option>
                     <el-option key="2" label="女" value=2></el-option>
                 </el-select>
-                <el-input v-model="select_word" placeholder="手机号" class="handle-input mr10"></el-input>
+                <el-input v-model="filter_phone" placeholder="手机号" class="handle-input"></el-input>
+                <el-input v-model="filter_grade" placeholder="年级" class="handle-select mr10"></el-input>
+                <el-input v-model="filter_index" placeholder="班级" class="handle-select mr10"></el-input>
+                <el-button type="primary" icon="search" @click="search">重置</el-button>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" @click="handleCreate" class='new-button'>新建</el-button>
             </div>
@@ -23,7 +26,7 @@
                 <el-table-column prop="sex" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
                 <el-table-column prop="subject" label="科目" width="120"> </el-table-column>
-                <el-table-column prop="date" label="出生年月" sortable width="150"> </el-table-column>
+                <el-table-column prop="dat" label="出生年月" sortable width="150"> </el-table-column>
                 <el-table-column prop="age" label="年龄" sortable width="150"> </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -41,7 +44,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" :rules="rules" label-width="50px">
+            <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model.trim="form.name"></el-input>
                 </el-form-item>
@@ -51,7 +54,7 @@
                 <el-form-item label="手机" prop="mobile">
                     <el-input v-model.trim="form.mobile"></el-input>
                 </el-form-item>
-                <el-form-item label="教授科目" prop="subject">
+                <el-form-item label="科目" prop="subject">
                     <el-input v-model.trim="form.subject"></el-input>
                 </el-form-item>
                 <el-form-item label="地址">
@@ -80,7 +83,7 @@
 
 <script>
 export default {
-  name: "basetable",
+  name: "teacherlist",
   data() {
     return {
       url: "./static/vuetable.json",
@@ -110,7 +113,12 @@ export default {
         date: ""
       },
       idx: -1,
-      title: ""
+      title: "",
+      sexEnum: {
+        "0": "未知",
+        "1": "男",
+        "2": "女"
+      }
     };
   },
   created() {
@@ -138,26 +146,16 @@ export default {
       });
     }
   },
-  rules: {
-    name: [{ required: true, message: "姓名为必填项", trigger: "blur" }],
-    sex: [{ required: true, message: "请输入", trigger: "blur" }],
-    subject: [{ required: true, message: "请输入", trigger: "blur" }],
-    mobile: [{ required: true, message: "请输入", trigger: "blur" }]
-  },
   methods: {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
       this.getData();
     },
-    // 获取 easy-mock 的模拟数据
     getData() {
-      // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-      if (process.env.NODE_ENV === "development") {
-        this.url = "/ms/table/list";
-      }
+      this.url = "/api/v1/dean/teacher";
       this.$axios
-        .post(this.url, {
+        .get(this.url, {
           page: this.cur_page
         })
         .then(res => {
@@ -195,6 +193,7 @@ export default {
         mobile: item.mobile,
         date: item.date,
         address: item.address,
+        subject: item.subject,
         opType: "edit"
       };
       this.editVisible = true;
@@ -222,7 +221,23 @@ export default {
         this.$set(this.tableData, this.idx, this.form);
         this.$message.success(`修改第 ${this.idx + 1} 行成功`);
       } else if (opType == "create") {
-        if (this.form.name) {
+        // check condition
+        // todo: maybe add some alert
+        if (!this.form.name) {
+          this.$message.error("姓名不可为空");
+          return;
+        }
+        if (this.form.sex != 1 && this.form.sex != 2) {
+          this.$message.error("性别为必选项");
+          return;
+        }
+        if (!this.form.mobile) {
+          this.$message.error("手机为必填项");
+          return;
+        }
+        if (!this.form.subject) {
+          this.$message.error("科目为必填项");
+          return;
         }
         this.tableData.push(this.form);
         this.$message.success(`添加成功`);

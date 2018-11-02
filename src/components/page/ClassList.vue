@@ -16,13 +16,22 @@
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="名称" width="120"> </el-table-column>
-                <el-table-column prop="grade" label="年级" width="120"> </el-table-column>
-                <el-table-column prop="index" label="班级" width="120"> </el-table-column>
-                <el-table-column prop="teacher" label="班主任" width="120"> </el-table-column>
-                <el-table-column prop="date" label="入学日期" sortable width="150"> </el-table-column>
-                <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
+                <el-table-column type="selection" width="30" align="center"></el-table-column>
+                <el-table-column prop="name" label="名称" width="100"> </el-table-column>
+                <el-table-column prop="grade" label="年级" width="50"> </el-table-column>
+                <el-table-column prop="index" label="班级" width="50"> </el-table-column>
+                <el-table-column prop="teacher" label="班主任" width="90"> </el-table-column>
+                <el-table-column prop="chinese" label="语文" width="100"> </el-table-column>
+                <el-table-column prop="math" label="数学" width="100"> </el-table-column>
+                <el-table-column prop="english" label="英语" width="100"> </el-table-column>
+                <el-table-column prop="history" label="历史" width="100"> </el-table-column>
+                <el-table-column prop="geography" label="地理" width="100"> </el-table-column>
+                <el-table-column prop="physical" label="物理" width="100"> </el-table-column>
+                <el-table-column prop="biology" label="生物" width="100"> </el-table-column>
+                <el-table-column prop="chemistry" label="化学" width="100"> </el-table-column>
+                <el-table-column prop="history" label="历史" width="100"> </el-table-column>
+                <el-table-column prop="political" label="政治" width="100"> </el-table-column>
+                <el-table-column prop="date" label="入学日期" sortable width="120"> </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
