@@ -1,8 +1,7 @@
 import axios from 'axios';
-import Qs from 'qs';
 import * as object from "./object.js";
 
-import { PROXY_TABLE_PREFIX } from "@/config/index.js";
+import { BASE_URL } from "@/config/index.js";
 
 /**
  * 全局http调用
@@ -55,7 +54,7 @@ function http(options) {
  */
 async function simplePost(url, data, pathIsUrl = false) {
   let res = await http({
-    url: pathIsUrl ? PROXY_TABLE_PREFIX + url : url,
+    url: pathIsUrl ? BASE_URL + url : url,
     method: 'POST',
     data: data
   });
@@ -66,10 +65,36 @@ async function simplePost(url, data, pathIsUrl = false) {
  * get请求封装
  */
 async function simpleGet(url, params, pathIsUrl = false) {
+  console.log(url)
   let res = await http({
-    url: pathIsUrl ? PROXY_TABLE_PREFIX + url : url,
+    url: pathIsUrl ? BASE_URL + url : url,
     method: 'GET',
     params: params
+  });
+  return res;
+}
+
+/*
+ * put method
+ */
+async function simplePut(url, data, pathIsUrl = false) {
+  console.log(url)
+  let res = await http({
+    url: pathIsUrl ? BASE_URL + url : url,
+    method: 'PUT',
+    data: data
+  });
+  return res;
+}
+
+/*
+ * delete method
+ */
+async function simpleDelete(url, data, pathIsUrl = false) {
+  let res = await http({
+    url: pathIsUrl ? BASE_URL + url : url,
+    method: 'DELETE',
+    data: data
   });
   return res;
 }
@@ -77,5 +102,7 @@ async function simpleGet(url, params, pathIsUrl = false) {
 export {
   http,
   simplePost,
+  simplePut,
+  simpleDelete,
   simpleGet
 };

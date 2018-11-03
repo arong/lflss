@@ -8,25 +8,27 @@
         <div class="container">
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-                <el-select v-model="filter_sex" placeholder="筛选性别" class="handle-select mr10">
+                <el-select v-model.trim = "filter.gender" placeholder="筛选性别" class="handle-select mr10">
                     <el-option key="0" label="全部" value=0></el-option>
                     <el-option key="1" label="男" value=1></el-option>
                     <el-option key="2" label="女" value=2></el-option>
                 </el-select>
-                <el-input v-model="filter_phone" placeholder="手机号" class="handle-input"></el-input>
-                <el-input v-model="filter_grade" placeholder="年级" class="handle-select mr10"></el-input>
-                <el-input v-model="filter_index" placeholder="班级" class="handle-select mr10"></el-input>
-                <el-button type="primary" icon="search" @click="search">重置</el-button>
+                <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input>
+                <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input>
+                <el-input v-model="filter.name" placeholder="姓名" class="handle-select mr10"></el-input>
+                <el-input v-model="filter.mobile" placeholder="手机号" class="handle-input"></el-input>
+                <el-button type="primary" icon="search" @click="resetSearch">重置</el-button>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" @click="handleCreate" class='new-button'>新建</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="姓名" width="120"> </el-table-column>
-                <el-table-column prop="sexText" label="性别" width="120"> </el-table-column>
+                <el-table-column prop="real_name" label="姓名" width="120"> </el-table-column>
+                <el-table-column prop="login_name" label="登录名" width="120"> </el-table-column>
+                <el-table-column prop="gender_text" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
-                <el-table-column prop="subject" label="科目" width="120"> </el-table-column>
-                <el-table-column prop="dat" label="出生年月" sortable width="150"> </el-table-column>
+                <el-table-column prop="subject_id" label="科目" width="120"> </el-table-column>
+                <el-table-column prop="birthday" label="出生年月" sortable width="150"> </el-table-column>
                 <el-table-column prop="age" label="年龄" sortable width="150"> </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -45,23 +47,33 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model.trim="form.name"></el-input>
+                <el-form-item label="登录名" prop="login_name">
+                    <el-input v-model.trim="form.login_name"></el-input>
                 </el-form-item>
-                <el-form-item label="性别" prop="sex">
-                    <el-input v-model.trim="form.sex"></el-input>
+                <el-form-item label="密码" prop="password">
+                    <el-input v-model.trim="form.password"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" prop="real_name">
+                    <el-input v-model.trim="form.real_name"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="gender">
+                <el-select v-model="form.gender_text" placeholder="性别">
+                    <el-option key="3" label="未知" value= "未知"></el-option>
+                    <el-option key="1" label="男" value='男'></el-option>
+                    <el-option key="2" label="女" value='女'></el-option>
+                </el-select>
                 </el-form-item>
                 <el-form-item label="手机" prop="mobile">
                     <el-input v-model.trim="form.mobile"></el-input>
                 </el-form-item>
                 <el-form-item label="科目" prop="subject">
-                    <el-input v-model.trim="form.subject"></el-input>
+                    <el-input v-model.trim="form.subject_id"></el-input>
                 </el-form-item>
                 <el-form-item label="地址">
                     <el-input v-model.trim="form.address"></el-input>
                 </el-form-item>
                 <el-form-item label="出生年月">
-                    <el-date-picker type="date" placeholder="选择日期" v-model.trim="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model.trim="form.birthday" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -75,28 +87,20 @@
             <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delVisible = false">取 消</el-button>
-                <el-button type="primary" @click="deleteRow">确 定</el-button>
+                <el-button type="primary" @click="deleteRow()">确 定</el-button>
             </span>
         </el-dialog>
     </div>
 </template>
 
 <script>
+import utils from "@/utils/index.js";
 export default {
   name: "teacherlist",
   data() {
     return {
       url: "./static/vuetable.json",
-      tableData: [
-        {
-          date: "2018-11-01",
-          mobile: "12345678910",
-          sex: 1,
-          name: "鱼老师",
-          subject: "地理",
-          address: "兰州市"
-        }
-      ],
+      tableData: [],
       cur_page: 1,
       multipleSelection: [],
       select_cate: "",
@@ -105,24 +109,20 @@ export default {
       is_search: false,
       editVisible: false,
       delVisible: false,
-      form: {
-        name: "",
-        sex: 0,
-        mobile: "",
-        address: "",
-        date: ""
-      },
+      form: {},
+      filter:{},
       idx: -1,
       title: "",
-      sexEnum: {
+      genderMap: {
         "0": "未知",
         "1": "男",
         "2": "女"
       },
-
-      filter_phone: "",
-      filter_grade: "",
-      filter_index: "",
+      genderText2Enum: {
+        男: 1,
+        女: 2,
+        未知: 3
+      }
     };
   },
   created() {
@@ -131,26 +131,9 @@ export default {
   computed: {
     data() {
       return this.tableData.filter(d => {
-
-        // sex取文字
-        d.sexText = this.sexEnum[d.sex];
-
-        let is_del = false;
-        for (let i = 0; i < this.del_list.length; i++) {
-          if (d.name === this.del_list[i].name) {
-            is_del = true;
-            break;
-          }
-        }
-        if (!is_del) {
-          if (
-            d.address.indexOf(this.select_cate) > -1 &&
-            (d.name.indexOf(this.select_word) > -1 ||
-              d.address.indexOf(this.select_word) > -1)
-          ) {
-            return d;
-          }
-        }
+        // get gender text
+        d.gender_text = this.genderMap[d.gender];
+        return d;
       });
     }
   },
@@ -160,15 +143,31 @@ export default {
       this.cur_page = val;
       this.getData();
     },
-    getData() {
-      this.url = "/api/v1/dean/teacher";
-      this.$axios
-        .get(this.url, {
-          page: this.cur_page
-        })
-        .then(res => {
-          this.tableData = res.data.list;
-        });
+    async getData() {
+      let res = await utils.simpleGet("/teacher", {}, true);
+      if (res.code === 0) {
+        this.tableData = res.data;
+      } else {
+        this.tableData = [];
+      }
+    },
+    newTeacher() {
+      return {
+        login_name: "",
+        real_name: "",
+        gender: 0,
+        mobile: "",
+        birthday: "",
+        address: ""
+      };
+    },
+    newForm(type) {
+      let data = this.newTeacher();
+      data["opType"] = type;
+      return data;
+    },
+    resetSearch() {
+      this.filter = {}
     },
     search() {
       this.is_search = true;
@@ -181,82 +180,97 @@ export default {
     },
     handleCreate() {
       this.title = "新建";
-      this.form = {
-        name: "",
-        sex: 0,
-        mobile: "",
-        date: "",
-        address: "",
-        opType: "create"
-      };
+      this.form = this.newForm("create");
       this.editVisible = true;
     },
     handleEdit(index, row) {
       this.title = "编辑";
-      this.idx = index;
-      const item = this.tableData[index];
-      this.form = {
-        name: item.name,
-        sex: item.sex,
-        mobile: item.mobile,
-        date: item.date,
-        address: item.address,
-        subject: item.subject,
-        opType: "edit"
-      };
+      this.form = { ...this.tableData[index] };
+      this.form["opType"] = "edit";
       this.editVisible = true;
     },
     handleDelete(index, row) {
       this.idx = index;
       this.delVisible = true;
     },
-    delAll() {
-      const length = this.multipleSelection.length;
-      let str = "";
-      this.del_list = this.del_list.concat(this.multipleSelection);
-      for (let i = 0; i < length; i++) {
-        str += this.multipleSelection[i].name + " ";
-      }
-      this.$message.error("删除了" + str);
-      this.multipleSelection = [];
-    },
+    delAll() {},
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    checkFormData(data) {
+      // check condition
+      // todo: maybe add some alert
+      if (!data.login_name) {
+        this.$message.error("登录名不可为空");
+        return false;
+      }
+      if (!data.real_name) {
+        this.$message.error("姓名不可为空");
+        return false;
+      }
+      if (data.gender != 1 && this.form.gender != 2) {
+        this.$message.error("性别为必选项");
+        return false;
+      }
+      data.gender = Number(data.gender);
+      if (!data.mobile) {
+        this.$message.error("手机为必填项");
+        return false;
+      }
+      if (data.subject_id==0) {
+        this.$message.error("科目为必填项");
+        return false;
+      }
+      data.subject_id = Number(data.subject_id)
+      return true;
+    },
     // 保存编辑
-    saveEdit(opType) {
+    async saveEdit(opType) {
+      this.form.gender = this.genderText2Enum[this.form.gender_text];
+      console.log(this.form);
+      let isValid = this.checkFormData(this.form);
+      if (!isValid) {
+        console.log("invalid data");
+        return;
+      }
       if (opType == "edit") {
-        this.$set(this.tableData, this.idx, this.form);
-        this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+        let res = await utils.simplePut(
+          "/teacher/" + this.form.teacher_id,
+          this.form,
+          true
+        );
+        if (res.code == 0) {
+          this.$message.success("修改成功");
+        } else {
+          this.$message.error(res.msg);
+          return;
+        }
       } else if (opType == "create") {
-        // check condition
-        // todo: maybe add some alert
-        if (!this.form.name) {
-          this.$message.error("姓名不可为空");
+        console.log("add new teacher");
+        let res = await utils.simplePost("/teacher", this.form, true);
+        if (res.code === 0) {
+          this.$message.success("添加成功");
+        } else {
+          this.$message.error(res.msg);
           return;
         }
-        if (this.form.sex != 1 && this.form.sex != 2) {
-          this.$message.error("性别为必选项");
-          return;
-        }
-        if (!this.form.mobile) {
-          this.$message.error("手机为必填项");
-          return;
-        }
-        if (!this.form.subject) {
-          this.$message.error("科目为必填项");
-          return;
-        }
-        this.tableData.push(this.form);
-        this.$message.success(`添加成功`);
       }
       this.editVisible = false;
+      this.getData();
     },
     // 确定删除
-    deleteRow() {
-      this.tableData.splice(this.idx, 1);
-      this.$message.success("删除成功");
+    async deleteRow() {
+      let id = this.tableData[this.idx].teacher_id;
+      console.log("delete teacher", id);
+      let res = await utils.simpleDelete("/teacher/" + id, {}, true);
+      if (res.code === 0) {
+        this.$message.success("删除成功");
+      } else {
+        this.$message.error(res.msg);
+        return;
+      }
       this.delVisible = false;
+      this.getData();
     }
   }
 };
