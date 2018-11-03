@@ -296,10 +296,12 @@ export default {
       this.getData();
     },
     async delList() {
-      console.log(this.multipleSelection);
-      let ids = []
+      let ids = [];
       for (var i = 0; i < this.multipleSelection.length; i++) {
-        ids.push(this.multipleSelection[i].teacher_id)
+        ids.push(this.multipleSelection[i].teacher_id);
+      }
+      if (ids.length == 0) {
+        return;
       }
       console.log(ids);
       let res = await utils.simplePost(
