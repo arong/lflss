@@ -8,10 +8,10 @@
         <div class="container">
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-                <el-select v-model.trim = "filter.gender" placeholder="筛选性别" class="handle-select mr10">
-                    <el-option key="0" label="全部" value=0></el-option>
-                    <el-option key="1" label="男" value=1></el-option>
-                    <el-option key="2" label="女" value=2></el-option>
+                <el-select v-model.trim = "filter.gender_text" placeholder="筛选性别" class="handle-select mr10">
+                    <el-option key="0" label="全部" value="全部"></el-option>
+                    <el-option key="1" label="男" value='男'></el-option>
+                    <el-option key="2" label="女" value='女'></el-option>
                 </el-select>
                 <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input>
                 <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input>
@@ -39,7 +39,7 @@
                 </el-table-column>
             </el-table>
             <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total=this.tableData.length>
+                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total=this.total>
                 </el-pagination>
             </div>
         </div>
@@ -47,11 +47,14 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="登录名" prop="login_name">
+                <el-form-item label="登录名" prop="login_name" v-show= "form.opType == 'create'">
                     <el-input v-model.trim="form.login_name"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model.trim="form.password"></el-input>
+                <el-form-item label="密码" prop="password" v-show="form.opType=='create'">
+                    <el-input type='password' v-model.trim="form.password"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="password_reconfig" v-show="form.opType=='create'">
+                    <el-input type='password' v-model.trim="form.password_reconfig"></el-input>
                 </el-form-item>
                 <el-form-item label="姓名" prop="real_name">
                     <el-input v-model.trim="form.real_name"></el-input>
@@ -101,6 +104,7 @@ export default {
     return {
       url: "./static/vuetable.json",
       tableData: [],
+      total: 0,
       cur_page: 1,
       multipleSelection: [],
       select_cate: "",
@@ -110,7 +114,7 @@ export default {
       editVisible: false,
       delVisible: false,
       form: {},
-      filter:{},
+      filter: {},
       idx: -1,
       title: "",
       genderMap: {
@@ -144,9 +148,13 @@ export default {
       this.getData();
     },
     async getData() {
-      let res = await utils.simpleGet("/teacher", {}, true);
+      this.filter["page"] = this.cur_page;
+      this.filter["size"] = 10;
+      this.filter.gender = this.genderText2Enum[this.filter.gender_text];
+      let res = await utils.simplePost("/teacher/filter", this.filter, true);
       if (res.code === 0) {
-        this.tableData = res.data;
+        this.tableData = res.data.list;
+        this.total = res.data.total;
       } else {
         this.tableData = [];
       }
@@ -167,10 +175,10 @@ export default {
       return data;
     },
     resetSearch() {
-      this.filter = {}
+      this.filter = {};
     },
     search() {
-      this.is_search = true;
+      this.getData();
     },
     formatter(row, column) {
       return row.address;
@@ -200,9 +208,23 @@ export default {
     checkFormData(data) {
       // check condition
       // todo: maybe add some alert
-      if (!data.login_name) {
-        this.$message.error("登录名不可为空");
-        return false;
+      if (data.opType == "create") {
+        if (!data.login_name) {
+          this.$message.error("登录名不可为空");
+          return false;
+        }
+        if (!data.password) {
+          this.$message.error("请输入密码");
+          return false;
+        }
+        if (!data.password_reconfig) {
+          this.$message.error("请确认密码");
+          return false;
+        }
+        if (data.password != data.password_reconfig) {
+          this.$message.error("两次输入的密码不一致")
+          return false;
+        }
       }
       if (!data.real_name) {
         this.$message.error("姓名不可为空");
@@ -217,11 +239,11 @@ export default {
         this.$message.error("手机为必填项");
         return false;
       }
-      if (data.subject_id==0) {
+      if (data.subject_id == 0) {
         this.$message.error("科目为必填项");
         return false;
       }
-      data.subject_id = Number(data.subject_id)
+      data.subject_id = Number(data.subject_id);
       return true;
     },
     // 保存编辑
