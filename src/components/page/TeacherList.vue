@@ -7,7 +7,7 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delList">批量删除</el-button>
                 <el-select v-model.trim = "filter.gender_text" placeholder="筛选性别" class="handle-select mr10">
                     <el-option key="0" label="全部" value="全部"></el-option>
                     <el-option key="1" label="男" value='男'></el-option>
@@ -24,7 +24,6 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="real_name" label="姓名" width="120"> </el-table-column>
-                <el-table-column prop="login_name" label="登录名" width="120"> </el-table-column>
                 <el-table-column prop="gender_text" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
                 <el-table-column prop="subject_id" label="科目" width="120"> </el-table-column>
@@ -201,7 +200,6 @@ export default {
       this.idx = index;
       this.delVisible = true;
     },
-    delAll() {},
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -222,7 +220,7 @@ export default {
           return false;
         }
         if (data.password != data.password_reconfig) {
-          this.$message.error("两次输入的密码不一致")
+          this.$message.error("两次输入的密码不一致");
           return false;
         }
       }
@@ -280,11 +278,14 @@ export default {
       this.editVisible = false;
       this.getData();
     },
-    // 确定删除
     async deleteRow() {
       let id = this.tableData[this.idx].teacher_id;
       console.log("delete teacher", id);
-      let res = await utils.simpleDelete("/teacher/" + id, {}, true);
+      let res = await utils.simplePost(
+        "/teacher/delete",
+        { id_list: [id] },
+        true
+      );
       if (res.code === 0) {
         this.$message.success("删除成功");
       } else {
@@ -292,6 +293,26 @@ export default {
         return;
       }
       this.delVisible = false;
+      this.getData();
+    },
+    async delList() {
+      console.log(this.multipleSelection);
+      let ids = []
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        ids.push(this.multipleSelection[i].teacher_id)
+      }
+      console.log(ids);
+      let res = await utils.simplePost(
+        "/teacher/delete",
+        { id_list: ids },
+        true
+      );
+      if (res.code === 0) {
+        this.$message.success("删除成功");
+      } else {
+        this.$message.error(res.msg);
+        return;
+      }
       this.getData();
     }
   }
