@@ -2,21 +2,58 @@
   <div class="outer">
     <div class="middle">
       <div class="inner">
-        <el-form>
-          <el-form-item prop="username">
-            <el-input placeholder="用户名"></el-input>
+        <el-form :model="loginForm" :rules="rules" ref="loginForm">
+          <el-form-item prop="login_name">
+            <el-input v-model.trim="loginForm.login_name" placeholder="用户名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input type="password" placeholder="密码"></el-input>
+            <el-input v-model="loginForm.password" type="password" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item style="text-align:center">
-            <el-button type="primary" class="submit_btn">登录</el-button>
+            <el-button type="primary" class="submit_btn" @click="fakeLogin('loginForm')">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  name: "login",
+  data: function() {
+    return {
+      loginForm: {
+        login_name: "",
+        password: ""
+      },
+      rules: {
+        login_name: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+      }
+    };
+  },
+  methods: {
+    fakeLogin(loginForm) {
+      this.$refs[loginForm].validate(valid => {
+        if (valid) {
+          console.log(this.loginForm.login_name);
+          console.log(this.loginForm.password);
+          localStorage.setItem("login_name", "aronic");
+          localStorage.setItem("token", "zhi-ma-kai-men");
+          localStorage.setItem("user_id", "1000");
+          this.$router.push("/");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    }
+  }
+};
+</script>
 
 <style>
 .outer {

@@ -177,6 +177,7 @@ export default {
       this.filter = {};
     },
     search() {
+      this.cur_page = 1;
       this.getData();
     },
     formatter(row, column) {
@@ -190,11 +191,22 @@ export default {
       this.form = this.newForm("create");
       this.editVisible = true;
     },
-    handleEdit(index, row) {
+    async handleEdit(index, row) {
       this.title = "编辑";
-      this.form = { ...this.tableData[index] };
       this.form["opType"] = "edit";
       this.editVisible = true;
+      let res = await utils.simpleGet(
+        "/teacher/" + this.tableData[index].teacher_id,
+        {},
+        true
+      );
+      if (res.code == 0) {
+        this.form = res.data;
+        this.form.gender_text = this.genderMap[this.form.gender]
+      } else {
+        this.$message.error(res.msg);
+        return;
+      }
     },
     handleDelete(index, row) {
       this.idx = index;
@@ -247,10 +259,8 @@ export default {
     // 保存编辑
     async saveEdit(opType) {
       this.form.gender = this.genderText2Enum[this.form.gender_text];
-      console.log(this.form);
       let isValid = this.checkFormData(this.form);
       if (!isValid) {
-        console.log("invalid data");
         return;
       }
       if (opType == "edit") {
@@ -266,7 +276,6 @@ export default {
           return;
         }
       } else if (opType == "create") {
-        console.log("add new teacher");
         let res = await utils.simplePost("/teacher", this.form, true);
         if (res.code === 0) {
           this.$message.success("添加成功");
@@ -280,7 +289,6 @@ export default {
     },
     async deleteRow() {
       let id = this.tableData[this.idx].teacher_id;
-      console.log("delete teacher", id);
       let res = await utils.simplePost(
         "/teacher/delete",
         { id_list: [id] },
@@ -303,7 +311,6 @@ export default {
       if (ids.length == 0) {
         return;
       }
-      console.log(ids);
       let res = await utils.simplePost(
         "/teacher/delete",
         { id_list: ids },
