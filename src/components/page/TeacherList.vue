@@ -26,13 +26,13 @@
                 <el-table-column prop="real_name" label="姓名" width="120"> </el-table-column>
                 <el-table-column prop="gender_text" label="性别" width="120"> </el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
-                <el-table-column prop="subject_id" label="科目" width="120"> </el-table-column>
+                <el-table-column prop="subject_name" label="科目" width="120"> </el-table-column>
                 <el-table-column prop="birthday" label="出生年月" sortable width="150"> </el-table-column>
                 <el-table-column prop="age" label="年龄" sortable width="150"> </el-table-column>
                 <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index)">编辑</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
@@ -69,7 +69,14 @@
                     <el-input v-model.trim="form.mobile"></el-input>
                 </el-form-item>
                 <el-form-item label="科目" prop="subject">
-                    <el-input v-model.trim="form.subject_id"></el-input>
+                  <el-select v-model="form.subject_id" placeholder="选择课程">
+                    <el-option
+                      v-for="item in subject_list"
+                      :key="item.subject_name"
+                      :label="item.subject_name"
+                      :value="item.subject_id">
+                    </el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item label="地址">
                     <el-input v-model.trim="form.address"></el-input>
@@ -114,8 +121,11 @@ export default {
       delVisible: false,
       form: {},
       filter: {},
+      subject_list: {},
       idx: -1,
       title: "",
+      subjectMap: {},
+      subjectReverseMap: {},
       genderMap: {
         "0": "未知",
         "1": "男",
@@ -129,13 +139,17 @@ export default {
     };
   },
   created() {
-    this.getData();
+    this.getSubject().then(() => {
+      console.log(this.subjectMap);
+      this.getData();
+    });
   },
   computed: {
     data() {
       return this.tableData.filter(d => {
         // get gender text
         d.gender_text = this.genderMap[d.gender];
+        d.subject_name = this.subjectMap[d.subject_id];
         return d;
       });
     }
@@ -156,6 +170,19 @@ export default {
         this.total = res.data.total;
       } else {
         this.tableData = [];
+      }
+    },
+    async getSubject() {
+      let res = await utils.simpleGet("/subject/", {}, true);
+      if (res.code === 0) {
+        for (var i = 0; i < res.data.length; i++) {
+          this.subject_list = res.data;
+          this.subjectMap[res.data[i].subject_id] = res.data[i].subject_name;
+          this.subjectReverseMap[res.data[i].subject_name] =
+            res.data[i].subject_id;
+        }
+      } else {
+        this.subjectMap = {};
       }
     },
     newTeacher() {
@@ -191,9 +218,8 @@ export default {
       this.form = this.newForm("create");
       this.editVisible = true;
     },
-    async handleEdit(index, row) {
+    async handleEdit(index) {
       this.title = "编辑";
-      this.form["opType"] = "edit";
       this.editVisible = true;
       let res = await utils.simpleGet(
         "/teacher/" + this.tableData[index].teacher_id,
@@ -202,11 +228,13 @@ export default {
       );
       if (res.code == 0) {
         this.form = res.data;
-        this.form.gender_text = this.genderMap[this.form.gender]
+        this.form.gender_text = this.genderMap[this.form.gender];
+        this.form.subject_name = this.subjectMap[this.form.subject_id];
       } else {
         this.$message.error(res.msg);
         return;
       }
+      this.form["opType"] = "edit";
     },
     handleDelete(index, row) {
       this.idx = index;
