@@ -61,7 +61,7 @@ async function simplePost(url, data, pathIsUrl = false) {
     check: '',
   }
   var hash = md5.create();
-  hash.update(packet.token + packet.timestamp);
+  hash.update(String(packet.token + packet.timestamp));
   console.log(hash.hex());
   packet['check'] = hash.hex();
 
