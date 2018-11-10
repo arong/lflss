@@ -1,4 +1,5 @@
 import axios from 'axios';
+import md5 from 'js-md5';
 import * as object from "./object.js";
 
 import { BASE_URL } from "@/config/index.js";
@@ -38,7 +39,7 @@ function http(options) {
     return axios(options).then(res => {
       return res.data; // axios会多封闭一层, res.data才是真正的数据
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.resolve({
       code: -100, // 全局通用错误处理
       msg: err.msg || 'error',
@@ -53,10 +54,21 @@ function http(options) {
  * pathIsUrl: path是不是看作url, 这样会自动域名, 简单一些
  */
 async function simplePost(url, data, pathIsUrl = false) {
+  let packet = {
+    token: sessionStorage.getItem("token"),
+    timestamp: Date.now(),
+    data: data,
+    check: '',
+  }
+  var hash = md5.create();
+  hash.update(packet.token + packet.timestamp);
+  console.log(hash.hex());
+  packet['check'] = hash.hex();
+
   let res = await http({
     url: pathIsUrl ? BASE_URL + url : url,
     method: 'POST',
-    data: data
+    data: packet
   });
   return res;
 }
