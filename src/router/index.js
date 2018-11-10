@@ -41,6 +41,10 @@ export default new Router({
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },
         {
+            path: '/404',
+            component: resolve => require(['../components/common/404.vue'], resolve)
+        },
+        {
             path: '*',
             redirect: '/404'
         }
