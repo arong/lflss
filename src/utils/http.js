@@ -19,7 +19,7 @@ function http(options) {
     // add to request body
     data: {},
     headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Type': 'text/plain',
     }
   };
 
@@ -78,10 +78,20 @@ async function simplePost(url, data, pathIsUrl = false) {
  */
 async function simpleGet(url, params, pathIsUrl = false) {
   console.log(url)
+  let packet = {
+    token: sessionStorage.getItem('token'),
+    timestamp: Date.now(),
+    check:"",
+  }
+  var hash = md5.create();
+  hash.update(String(packet.token + packet.timestamp));
+  console.log(hash.hex());
+  packet['check'] = hash.hex();
+
   let res = await http({
     url: pathIsUrl ? BASE_URL + url : url,
     method: 'GET',
-    params: params
+    params: {...packet, ...params}
   });
   return res;
 }

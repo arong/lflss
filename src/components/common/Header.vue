@@ -24,12 +24,12 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <a href="http://blog.gdfengshuo.com/about/" target="_blank">
+                        <!-- <a href="http://blog.gdfengshuo.com/about/" target="_blank">
                             <el-dropdown-item>关于作者</el-dropdown-item>
                         </a>
                         <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
                             <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a>
+                        </a> -->
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -44,13 +44,13 @@
             return {
                 collapse: false,
                 fullscreen: false,
-                name: 'linxin',
-                message: 2
+                name: '',
+                message: 0
             }
         },
         computed:{
             username(){
-                let username = localStorage.getItem('ms_username');
+                let username = sessionStorage.getItem('login_name');
                 return username ? username : this.name;
             }
         },
@@ -58,7 +58,8 @@
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
+                    sessionStorage.removeItem('token')
+                    sessionStorage.removeItem('login_name')
                     this.$router.push('/login');
                 }
             },

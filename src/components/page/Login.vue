@@ -40,24 +40,19 @@ export default {
     fakeLogin(loginForm) {
       this.$refs[loginForm].validate(async (valid) => {
         if (valid) {
-          // console.log(this.loginForm.login_name);
-          // console.log(this.loginForm.password);
-          // localStorage.setItem("login_name", "aronic");
-          // localStorage.setItem("token", "zhi-ma-kai-men");
-          // localStorage.setItem("user_id", "1000");
-          // this.$router.push("/");
           let res = await utils.simplePost(
             "/auth/login",
             { login_name: this.loginForm.login_name, password: this.loginForm.password },
             true
           );
           if (res.code != 0) {
-            console.log(res.data);
+            this.$message.error(res.msg)
             return false;
           }
+          sessionStorage.setItem("login_name", this.loginForm.login_name)
           sessionStorage.setItem("token", res.data);
           this.$router.push("/");
-          // return true;
+          return true;
         } else {
           console.log("error submit!!");
           return false;
