@@ -8,15 +8,8 @@
         <div class="container">
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delList">批量删除</el-button>
-                <el-select v-model.trim = "filter.gender_text" placeholder="筛选性别" class="handle-select mr10">
-                    <el-option key="0" label="全部" value="全部"></el-option>
-                    <el-option key="1" label="男" value='男'></el-option>
-                    <el-option key="2" label="女" value='女'></el-option>
-                </el-select>
                 <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input>
-                <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input>
-                <el-input v-model="filter.name" placeholder="姓名" class="handle-select mr10"></el-input>
-                <el-input v-model="filter.mobile" placeholder="手机号" class="handle-input"></el-input>
+                <el-input v-model="filter.term" placeholder="届别" class="handle-select mr10"></el-input>
                 <el-button type="primary" icon="search" @click="resetSearch">重置</el-button>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" @click="createClass" class='new-button'>新建</el-button>
@@ -37,7 +30,7 @@
                 <el-table-column prop="chemistry" label="化学" width="100"> </el-table-column>
                 <el-table-column prop="history" label="历史" width="100"> </el-table-column>
                 <el-table-column prop="political" label="政治" width="100"> </el-table-column>
-                <el-table-column prop="date" label="入学日期" sortable width="120"> </el-table-column>
+                <!-- <el-table-column prop="date" label="入学日期" sortable width="120"> </el-table-column> -->
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index)">编辑</el-button>
@@ -61,7 +54,7 @@
                     <el-input v-model.trim="form.index"></el-input>
                 </el-form-item>
                 <el-form-item label="班主任" prop="subject">
-                  <el-select v-model="form.master_id" placeholder="选择课程">
+                  <el-select v-model="form.master_id" placeholder="选择老师">
                     <el-option
                       v-for="item in teacher_list"
                       :key="item.name"
@@ -146,7 +139,7 @@ export default {
     async getData() {
       this.filter["page"] = this.cur_page;
       this.filter["size"] = 10;
-      let res = await utils.simpleGet("/class", this.filter, true);
+      let res = await utils.simpleGet("/class/list", this.filter, true);
       if (res.code === 0) {
         this.tableData = res.data.list;
         this.total = res.data.total;

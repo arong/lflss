@@ -70,6 +70,11 @@ async function simplePost(url, data, pathIsUrl = false) {
     method: 'POST',
     data: packet
   });
+
+  if (res.code == -2) {
+    sessionStorage.removeItem("token")
+    alert("账户在其他地方登陆")
+  }
   return res;
 }
 
@@ -93,38 +98,15 @@ async function simpleGet(url, params, pathIsUrl = false) {
     method: 'GET',
     params: {...packet, ...params}
   });
-  return res;
-}
-
-/*
- * put method
- */
-async function simplePut(url, data, pathIsUrl = false) {
-  console.log(url)
-  let res = await http({
-    url: pathIsUrl ? BASE_URL + url : url,
-    method: 'PUT',
-    data: data
-  });
-  return res;
-}
-
-/*
- * delete method
- */
-async function simpleDelete(url, data, pathIsUrl = false) {
-  let res = await http({
-    url: pathIsUrl ? BASE_URL + url : url,
-    method: 'DELETE',
-    data: data
-  });
+  if (res.code == -2){
+    sessionStorage.removeItem("token")
+    alert("账户在其他地方登陆")
+  }
   return res;
 }
 
 export {
   http,
   simplePost,
-  simplePut,
-  simpleDelete,
   simpleGet
 };

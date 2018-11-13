@@ -7,7 +7,7 @@
             <el-input v-model.trim="loginForm.login_name" placeholder="登录名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginForm.password" type="password" placeholder="密码"></el-input>
+            <el-input v-model="loginForm.password" type="password" @keyup.enter="fakeLogin('loginForm')" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item style="text-align:center">
             <el-button type="primary" class="submit_btn" @click="fakeLogin('loginForm')">登录</el-button>
