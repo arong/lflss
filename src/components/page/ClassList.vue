@@ -17,9 +17,10 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="30" align="center"></el-table-column>
                 <el-table-column prop="name" label="名称" width="100"> </el-table-column>
+                <el-table-column prop="year" label="开学年份" width="100"> </el-table-column>
                 <el-table-column prop="grade" label="年级" width="50"> </el-table-column>
                 <el-table-column prop="index" label="班级" width="50"> </el-table-column>
-                <el-table-column prop="teacher" label="班主任" width="90"> </el-table-column>
+                <el-table-column prop="master" label="班主任" width="90"> </el-table-column>
                 <el-table-column prop="chinese" label="语文" width="100"> </el-table-column>
                 <el-table-column prop="math" label="数学" width="100"> </el-table-column>
                 <el-table-column prop="english" label="英语" width="100"> </el-table-column>
@@ -52,6 +53,12 @@
                 </el-form-item>
                 <el-form-item label="班级">
                     <el-input v-model.trim="form.index"></el-input>
+                </el-form-item>
+                <el-form-item label="开学年份">
+                    <el-input v-model.trim="form.year"></el-input>
+                </el-form-item>
+                <el-form-item label="学期">
+                    <el-input v-model.trim="form.term"></el-input>
                 </el-form-item>
                 <el-form-item label="班主任" prop="subject">
                   <el-select v-model="form.master_id" placeholder="选择老师">
@@ -150,7 +157,12 @@ export default {
     async getTeacher() {
       let res = await utils.simpleGet("/teacher/", {}, true);
       if (res.code === 0) {
-        this.teacher_list = res.data.list
+        this.teacher_list = res.data.list;
+        this.teacher_map = this.teacher_list.reduce(function(map, obj) {
+          map[obj.id] = obj.name;
+          return map;
+        }, {});
+        console.log(this.teacher_map);
       } else {
         this.subjectMap = {};
       }
@@ -218,6 +230,12 @@ export default {
         return false;
       }
       data.index = Number(data.index);
+
+      if (data.year == 0) {
+        this.$message.error("开学年份为必填项");
+        return false;
+      }
+      data.year = Number(data.year);
       return true;
     },
     // 保存编辑
@@ -239,7 +257,7 @@ export default {
           return;
         }
       } else if (opType == "create") {
-        let res = await utils.simplePost("/class", this.form, true);
+        let res = await utils.simplePost("/class/add", this.form, true);
         if (res.code === 0) {
           this.$message.success("添加成功");
         } else {
@@ -253,7 +271,7 @@ export default {
     async deleteRow() {
       let id = this.tableData[this.idx].teacher_id;
       let res = await utils.simplePost(
-        "/teacher/delete",
+        "/class/delete",
         { id_list: [id] },
         true
       );
@@ -269,16 +287,12 @@ export default {
     async delList() {
       let ids = [];
       for (var i = 0; i < this.multipleSelection.length; i++) {
-        ids.push(this.multipleSelection[i].teacher_id);
+        ids.push(this.multipleSelection[i].id);
       }
       if (ids.length == 0) {
         return;
       }
-      let res = await utils.simplePost(
-        "/teacher/delete",
-        { id_list: ids },
-        true
-      );
+      let res = await utils.simplePost("/class/delete", { id_list: ids }, true);
       if (res.code === 0) {
         this.$message.success("删除成功");
       } else {
