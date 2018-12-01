@@ -58,6 +58,11 @@
                         index: 'classList',
                         title: '班级列表'
                     },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'subjectList',
+                        title: '科目列表'
+                    },
                     // {
                     //     icon: 'el-icon-lx-copy',
                     //     index: 'tabs',

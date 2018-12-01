@@ -34,6 +34,11 @@ export default new Router({
                     component: resolve => require(['../components/page/ClassList.vue'], resolve),
                     meta: { title: '班级列表' }
                 },
+                {
+                    path: '/subjectList',
+                    component: resolve => require(['../components/page/SubjectList.vue'], resolve),
+                    meta: { title: '科目列表' }
+                },
             ]
         },
         {

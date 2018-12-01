@@ -1,52 +1,70 @@
 <template>
-    <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 基础表格</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <div class="container">
-            <div class="handle-box">
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delList">批量删除</el-button>
-                <el-select v-model.trim = "filter.gender_text" placeholder="筛选性别" class="handle-select mr10">
-                    <el-option key="0" label="全部" value="全部"></el-option>
-                    <el-option key="1" label="男" value='男'></el-option>
-                    <el-option key="2" label="女" value='女'></el-option>
-                </el-select>
-                <!-- <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input> -->
-                <!-- <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input> -->
-                <el-input v-model="filter.name" placeholder="姓名" class="handle-select mr10"></el-input>
-                <el-input v-model="filter.mobile" placeholder="手机号" class="handle-input"></el-input>
-                <el-button type="primary" icon="search" @click="resetSearch">重置</el-button>
-                <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" @click="handleCreate" class='new-button'>新建</el-button>
-            </div>
-            <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="real_name" label="姓名" width="120"> </el-table-column>
-                <el-table-column prop="gender_text" label="性别" width="120"> </el-table-column>
-                <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
-                <el-table-column prop="subject_name" label="科目" width="120"> </el-table-column>
-                <el-table-column prop="birthday" label="出生年月" sortable width="150"> </el-table-column>
-                <el-table-column prop="age" label="年龄" sortable width="150"> </el-table-column>
-                <el-table-column prop="address" label="地址" :formatter="formatter"> </el-table-column>
-                <el-table-column label="操作" width="180" align="center">
-                    <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index)">编辑</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total=this.total>
-                </el-pagination>
-            </div>
-        </div>
+  <div class="table">
+    <div class="crumbs">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>
+          <i class="el-icon-lx-cascades"></i> 基础表格
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <div class="container">
+      <div class="handle-box">
+        <el-button type="primary" icon="delete" class="handle-del mr10" @click="delList">批量删除</el-button>
+        <el-select v-model.trim="filter.gender_text" placeholder="筛选性别" class="handle-select mr10">
+          <el-option key="0" label="全部" value="全部"></el-option>
+          <el-option key="1" label="男" value="男"></el-option>
+          <el-option key="2" label="女" value="女"></el-option>
+        </el-select>
+        <!-- <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input> -->
+        <!-- <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input> -->
+        <el-input v-model="filter.name" placeholder="姓名" class="handle-select mr10"></el-input>
+        <el-input v-model="filter.mobile" placeholder="手机号" class="handle-input"></el-input>
+        <el-button type="primary" icon="search" @click="resetSearch">重置</el-button>
+        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+        <el-button type="primary" @click="handleCreate" class="new-button">新建</el-button>
+      </div>
+      <el-table
+        :data="data"
+        border
+        stripe
+        class="table"
+        ref="multipleTable"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="real_name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="gender_text" label="性别" width="120"></el-table-column>
+        <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
+        <el-table-column prop="subject_name" label="科目" width="120"></el-table-column>
+        <el-table-column prop="birthday" label="出生年月" sortable width="150"></el-table-column>
+        <el-table-column prop="age" label="年龄" sortable width="150"></el-table-column>
+        <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>
+        <el-table-column label="操作" width="180" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index)">编辑</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-delete"
+              class="red"
+              @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          layout="prev, pager, next"
+          :total="this.total"
+        ></el-pagination>
+      </div>
+    </div>
 
-        <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="100px">
-                <!-- <el-form-item label="登录名" prop="login_name" v-show= "form.opType == 'create'">
+    <!-- 编辑弹出框 -->
+    <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+      <el-form ref="form" :model="form" label-width="100px">
+        <!-- <el-form-item label="登录名" prop="login_name" v-show= "form.opType == 'create'">
                     <el-input v-model.trim="form.login_name"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password" v-show="form.opType=='create'">
@@ -54,52 +72,58 @@
                 </el-form-item>
                 <el-form-item label="确认密码" prop="password_reconfig" v-show="form.opType=='create'">
                     <el-input type='password' v-model.trim="form.password_reconfig"></el-input>
-                </el-form-item> -->
-                <el-form-item label="姓名" prop="real_name">
-                    <el-input v-model.trim="form.real_name"></el-input>
-                </el-form-item>
-                <el-form-item label="性别" prop="gender">
-                <el-select v-model="form.gender_text" placeholder="性别">
-                    <el-option key="3" label="未知" value= "未知"></el-option>
-                    <el-option key="1" label="男" value='男'></el-option>
-                    <el-option key="2" label="女" value='女'></el-option>
-                </el-select>
-                </el-form-item>
-                <el-form-item label="手机" prop="mobile">
-                    <el-input v-model.trim="form.mobile"></el-input>
-                </el-form-item>
-                <el-form-item label="科目" prop="subject">
-                  <el-select v-model="form.subject_id" placeholder="选择课程">
-                    <el-option
-                      v-for="item in subject_list"
-                      :key="item.subject_name"
-                      :label="item.subject_name"
-                      :value="item.subject_id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model.trim="form.address"></el-input>
-                </el-form-item>
-                <el-form-item label="出生年月">
-                    <el-date-picker type="date" placeholder="选择日期" v-model.trim="form.birthday" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit(form.opType)">确 定</el-button>
-            </span>
-        </el-dialog>
+        </el-form-item>-->
+        <el-form-item label="姓名" prop="real_name">
+          <el-input v-model.trim="form.real_name"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="form.gender_text" placeholder="性别">
+            <el-option key="3" label="未知" value="未知"></el-option>
+            <el-option key="1" label="男" value="男"></el-option>
+            <el-option key="2" label="女" value="女"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input v-model.trim="form.mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="科目" prop="subject">
+          <el-select v-model="form.subject_id" placeholder="选择课程">
+            <el-option
+              v-for="item in subject_list"
+              :key="item.key"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地址">
+          <el-input v-model.trim="form.address"></el-input>
+        </el-form-item>
+        <el-form-item label="出生年月">
+          <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model.trim="form.birthday"
+            value-format="yyyy-MM-dd"
+            style="width: 100%;"
+          ></el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveEdit(form.opType)">确 定</el-button>
+      </span>
+    </el-dialog>
 
-        <!-- 删除提示框 -->
-        <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
-            <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">取 消</el-button>
-                <el-button type="primary" @click="deleteRow()">确 定</el-button>
-            </span>
-        </el-dialog>
-    </div>
+    <!-- 删除提示框 -->
+    <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteRow()">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -173,14 +197,13 @@ export default {
       }
     },
     async getSubject() {
-      let res = await utils.simpleGet("/subject/", {}, true);
+      let res = await utils.simpleGet("/subject/list", {}, true);
       if (res.code === 0) {
-        for (var i = 0; i < res.data.length; i++) {
-          this.subject_list = res.data;
-          this.subjectMap[res.data[i].subject_id] = res.data[i].subject_name;
-          this.subjectReverseMap[res.data[i].subject_name] =
-            res.data[i].subject_id;
-        }
+        this.subject_list = res.data;
+        this.subjectMap = this.subject_list.reduce(function(map, obj) {
+          map[obj.id] = obj.name;
+          return map;
+        }, {});
       } else {
         this.subjectMap = {};
       }
@@ -222,7 +245,7 @@ export default {
       this.title = "编辑";
       this.editVisible = true;
       let res = await utils.simpleGet(
-        "/teacher/" + this.tableData[index].teacher_id,
+        "/teacher/info/" + this.tableData[index].teacher_id,
         {},
         true
       );
@@ -292,11 +315,7 @@ export default {
         return;
       }
       if (opType == "edit") {
-        let res = await utils.simplePost(
-          "/teacher/modify",
-          this.form,
-          true
-        );
+        let res = await utils.simplePost("/teacher/modify", this.form, true);
         if (res.code == 0) {
           this.$message.success("修改成功");
         } else {
