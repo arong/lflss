@@ -122,7 +122,12 @@ export default {
       is_search: false,
       editVisible: false,
       delVisible: false,
-      form: {},
+      form: {grade:0,
+      index:0,
+      year:0,
+      term:0,
+      master_id:0,
+       teacher_list: [{ sid: 0, tid: 0 }] },
       filter: {},
       teacher_list: {},
       idx: -1,
@@ -136,9 +141,9 @@ export default {
   },
   computed: {
     data() {
-      return this.tableData.filter(d => {
-        return d;
-      });
+      // return this.tableData.filter(d => {
+      //   return d;
+      // });
     }
   },
   methods: {
@@ -152,34 +157,40 @@ export default {
       this.filter["size"] = 10;
       let res = await utils.simpleGet("/class/list", this.filter, true);
       if (res.code === 0) {
-        this.tableData = res.data.list;
-        this.total = res.data.total;
-        if (this.tableData === undefined || this.tableData.length == 0) {
+        if (typeof(res.data.list) === undefined || res.data.list.length == 0) {
           console.log("error found");
           return;
         }
-        for (var i = 0; i < this.tableData.length; i++) {
-          var curr = this.tableData[i];
-          if (curr.master_id!= 0) {
+        let list = res.data.list;
+        for (var i = 0; i < list.length; i++) {
+          var curr = list[i];
+          if (curr.master_id != 0) {
             curr.master = this.teacher_map[curr.master_id];
           }
           if (
             typeof curr.teacher_list == "undefined" ||
             curr.teacher_list.length == 0
           ) {
-            console.log("empty teacher list");
             continue;
           }
           for (var j = 0; j < curr.teacher_list.length; j++) {
             var tmp = curr.teacher_list[j];
-            var key = this.subject_map[tmp.sid].key;
-            var tname = this.teacher_map[tmp.tid];
-            curr[key] = tname;
-            console.log("key",key)
-            console.log("tname", tname)
+            var s = this.subject_map[tmp.sid];
+            if (!s) {
+              console.log("invalid data found", tmp)
+              continue;
+            }
+            var tname = this.teacher_map[tmp.tid]
+            if (!tname) {
+              continue;
+            }
+            // console.log("key", s.key);
+            // console.log("tname", tname);
+            curr[s.key] = tname;
           }
-          console.log("curr is ", curr);
         }
+        this.tableData = res.data.list;
+        this.total = res.data.total;
       } else {
         this.tableData = [];
       }
@@ -192,7 +203,7 @@ export default {
           map[obj.id] = obj.name;
           return map;
         }, {});
-        console.log(this.teacher_map);
+        // console.log(this.teacher_map);
       } else {
         this.subjectMap = {};
       }
@@ -205,10 +216,10 @@ export default {
           map[obj.id] = obj;
           return map;
         }, {});
-        console.log(this.subject_list);
-        console.log(this.subject_map);
+        // console.log(this.subject_map);
       } else {
-        this.subjectMap = {};
+        this.subject_list = [];
+        this.subject_map = {};
       }
     },
     async getClass(id) {
@@ -259,15 +270,16 @@ export default {
         true
       );
       if (res.code === 0) {
-        this.form = res.data;
         if (
-          typeof this.form.teacher_list == "undefined" ||
-          this.form.teacher_list.length == 0
+          typeof res.data.teacher_list == "undefined" ||
+          res.data.teacher_list.length == 0
         ) {
-          this.form.teacher_list = [{}];
+          res.data.teacher_list = [{}];
         }
+        this.form = res.data;
       } else {
-        return (this.form = { teacher_list: [{}] });
+        //
+        this.$message.error(res.msg)
       }
       this.form["opType"] = "edit";
     },

@@ -164,7 +164,6 @@ export default {
   },
   created() {
     this.getSubject().then(() => {
-      console.log(this.subjectMap);
       this.getData();
     });
   },

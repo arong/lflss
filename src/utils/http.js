@@ -62,7 +62,6 @@ async function simplePost(url, data, pathIsUrl = false) {
   }
   var hash = md5.create();
   hash.update(String(packet.token + packet.timestamp));
-  console.log(hash.hex());
   packet['check'] = hash.hex();
 
   let res = await http({
@@ -82,7 +81,6 @@ async function simplePost(url, data, pathIsUrl = false) {
  * get请求封装
  */
 async function simpleGet(url, params, pathIsUrl = false) {
-  console.log(url)
   let packet = {
     token: sessionStorage.getItem('token'),
     timestamp: Date.now(),
@@ -90,7 +88,6 @@ async function simpleGet(url, params, pathIsUrl = false) {
   }
   var hash = md5.create();
   hash.update(String(packet.token + packet.timestamp));
-  console.log(hash.hex());
   packet['check'] = hash.hex();
 
   let res = await http({
