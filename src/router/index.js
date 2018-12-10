@@ -13,7 +13,7 @@ export default new Router({
             path: '/',
             component: resolve => require(['../components/common/Home.vue'], resolve),
             meta: { title: '自述文件' },
-            children:[
+            children: [
                 {
                     path: '/dashboard',
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
@@ -39,6 +39,16 @@ export default new Router({
                     component: resolve => require(['../components/page/SubjectList.vue'], resolve),
                     meta: { title: '科目列表' }
                 },
+                {
+                    path: '/questionnaire',
+                    component: resolve => require(['../components/page/questionnaire.vue'], resolve),
+                    meta: { title: '调查问卷' }
+                },
+                {
+                    path: '/questionnaireEdit',
+                    component: resolve => require(['../components/page/questionnaireEdit.vue'], resolve),
+                    meta: { title: '编辑问卷' }
+                }
             ]
         },
         {
