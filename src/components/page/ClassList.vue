@@ -155,7 +155,7 @@ export default {
     async getData() {
       this.filter["page"] = this.cur_page;
       this.filter["size"] = 10;
-      let res = await utils.simpleGet("/class/list", this.filter, true);
+      let res = await utils.simpleGet("/class/filter", this.filter, true);
       if (res.code === 0) {
         if (typeof(res.data.list) === undefined || res.data.list.length == 0) {
           console.log("error found");

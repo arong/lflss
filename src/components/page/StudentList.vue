@@ -85,7 +85,7 @@
           <el-date-picker
             type="date"
             placeholder="选择日期"
-            v-model="form.date"
+            v-model="form.birthday"
             value-format="yyyy-MM-dd"
             style="width: 100%;"
           ></el-date-picker>
