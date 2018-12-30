@@ -32,8 +32,8 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
-        <el-table-column prop="real_name" label="姓名" width="120"></el-table-column>
-        <el-table-column prop="subject_name" label="科目" width="120"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="subject" label="科目" width="120"></el-table-column>
         <el-table-column prop="gender_text" label="性别" width="120"></el-table-column>
         <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
         <el-table-column prop="birthday" label="出生年月" sortable width="150"></el-table-column>
@@ -64,8 +64,8 @@
     <!-- 编辑弹出框 -->
     <el-dialog :title="title" :visible.sync="editVisible" width="30%">
       <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="姓名" prop="real_name">
-          <el-input v-model.trim="form.real_name"></el-input>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model.trim="form.name"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="gender">
           <el-select v-model="form.gender_text" placeholder="性别">
@@ -163,7 +163,7 @@ export default {
       return this.tableData.filter(d => {
         // get gender text
         d.gender_text = this.genderMap[d.gender];
-        d.subject_name = this.subjectMap[d.subject_id];
+        d.age = d.age === 0 ? null : d.age;
         return d;
       });
     }
@@ -178,7 +178,11 @@ export default {
       this.filter["page"] = this.cur_page;
       this.filter["size"] = 10;
       this.filter.gender = this.genderText2Enum[this.filter.gender_text];
-      let res = await utils.simplePost("/dean/teacher/filter", this.filter, true);
+      let res = await utils.simplePost(
+        "/dean/teacher/filter",
+        this.filter,
+        true
+      );
       if (res.code === 0) {
         this.tableData = res.data.list;
         this.total = res.data.total;
@@ -200,8 +204,7 @@ export default {
     },
     newTeacher() {
       return {
-        login_name: "",
-        real_name: "",
+        name: "",
         gender: 0,
         mobile: "",
         birthday: "",
@@ -242,7 +245,6 @@ export default {
       if (res.code == 0) {
         this.form = res.data;
         this.form.gender_text = this.genderMap[this.form.gender];
-        this.form.subject_name = this.subjectMap[this.form.subject_id];
       } else {
         this.$message.error(res.msg);
         return;
@@ -258,7 +260,6 @@ export default {
     },
     checkFormData(data) {
       // check condition
-      // todo: maybe add some alert
       if (data.opType == "create" && false) {
         if (!data.login_name) {
           this.$message.error("登录名不可为空");
@@ -277,7 +278,7 @@ export default {
           return false;
         }
       }
-      if (!data.real_name) {
+      if (!data.name) {
         this.$message.error("姓名不可为空");
         return false;
       }
@@ -286,10 +287,10 @@ export default {
         return false;
       }
       data.gender = Number(data.gender);
-      if (!data.mobile) {
-        this.$message.error("手机为必填项");
-        return false;
-      }
+      // if (!data.mobile) {
+      //   this.$message.error("手机为必填项");
+      //   return false;
+      // }
       if (data.subject_id == 0) {
         this.$message.error("科目为必填项");
         return false;
@@ -305,7 +306,11 @@ export default {
         return;
       }
       if (opType == "edit") {
-        let res = await utils.simplePost("/dean/teacher/modify", this.form, true);
+        let res = await utils.simplePost(
+          "/dean/teacher/modify",
+          this.form,
+          true
+        );
         if (res.code == 0) {
           this.$message.success("修改成功");
         } else {
