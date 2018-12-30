@@ -3,16 +3,16 @@
     <div class="title">
       <el-input type="text" v-model.trim="questionnaire.title"></el-input>
     </div>
-    <div class="content">
+    <div>
       <div class="question" v-for="question in questionnaire.questions" :key="question.question_id">
         <el-row>
           <el-col :span="12">
-            <div class="grid-content bg-purple">
+            <div class="grid-content ">
               <el-input type="text" v-model="question.question"></el-input>
             </div>
           </el-col>
           <el-col :span="12">
-            <div class="grid-content bg-purple-light">
+            <div class="grid-content">
               <el-select class="select" v-model="question.type" placeholder="题目类型">
                 <el-option
                   v-for="s in question_types"
@@ -98,6 +98,7 @@ export default {
 <style scopped>
 .questionnaire {
   width: 80%;
+  margin: 0 auto;
   border: black;
 }
 

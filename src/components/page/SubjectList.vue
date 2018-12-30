@@ -113,7 +113,7 @@ export default {
       this.getData();
     },
     async getData() {
-      let res = await utils.simpleGet("/subject/list", this.filter, true);
+      let res = await utils.simpleGet("/dean/subject/list", this.filter, true);
       if (res.code === 0) {
         this.tableData = res.data;
         this.total = this.tableData.length;
@@ -162,7 +162,7 @@ export default {
         return;
       }
       if (opType == "edit") {
-        let res = await utils.simplePost("/subject/update", this.form, true);
+        let res = await utils.simplePost("/dean/subject/update", this.form, true);
         if (res.code == 0) {
           this.$message.success("修改成功");
         } else {
@@ -170,7 +170,7 @@ export default {
           return;
         }
       } else if (opType == "create") {
-        let res = await utils.simplePost("/subject/add", this.form, true);
+        let res = await utils.simplePost("/dean/subject/add", this.form, true);
         if (res.code === 0) {
           this.$message.success("添加成功");
         } else {
@@ -184,7 +184,7 @@ export default {
     async deleteRow() {
       let id = this.tableData[this.idx].id;
       let res = await utils.simplePost(
-        "/subject/delete",
+        "/dean/subject/delete",
         { id_list: [id] },
         true
       );
@@ -206,7 +206,7 @@ export default {
         return;
       }
       let res = await utils.simplePost(
-        "/subject/delete",
+        "/dean/subject/delete",
         { id_list: ids },
         true
       );

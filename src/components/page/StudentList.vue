@@ -148,7 +148,7 @@ export default {
       this.getData();
     },
     async getClass() {
-      let res = await utils.simpleGet("/class/list", {}, true);
+      let res = await utils.simpleGet("/dean/class/list", {}, true);
       if (res.code === 0) {
         this.class_list = res.data;
         this.class_map = this.class_list.reduce(function(map, obj) {
@@ -163,7 +163,7 @@ export default {
     },
     async getData() {
       let res = await utils.simplePost(
-        "/student/list",
+        "/dean/student/list",
         { page: this.cur_page, size: 10, ...this.filter },
         true
       );
@@ -213,7 +213,7 @@ export default {
     },
     async handleDelete(index, row) {
       var id = this.tableData[index].student_id;
-      let res = await utils.simplePost("/student/delete", { id: id }, true);
+      let res = await utils.simplePost("/dean/student/delete", { id: id }, true);
       if (res.code === 0) {
         this.$message.success("删除成功");
       } else {
@@ -258,7 +258,7 @@ export default {
         if (!this.checkData(this.form)) {
           return;
         }
-        let res = await utils.simplePost("/student/add", this.form, true);
+        let res = await utils.simplePost("/dean/student/add", this.form, true);
         if (res.code === 0) {
           this.$message.success("添加成功");
         } else {
@@ -266,7 +266,7 @@ export default {
           return;
         }
       } else if (this.form.opType == "edit") {
-        let res = await utils.simplePost("/student/update", this.form, true);
+        let res = await utils.simplePost("/dean/student/update", this.form, true);
         if (res.code === 0) {
         } else {
           this.$message.error(res.msg);

@@ -33,9 +33,9 @@
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="real_name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="subject_name" label="科目" width="120"></el-table-column>
         <el-table-column prop="gender_text" label="性别" width="120"></el-table-column>
         <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
-        <el-table-column prop="subject_name" label="科目" width="120"></el-table-column>
         <el-table-column prop="birthday" label="出生年月" sortable width="150"></el-table-column>
         <el-table-column prop="age" label="年龄" sortable width="150"></el-table-column>
         <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>
@@ -64,15 +64,6 @@
     <!-- 编辑弹出框 -->
     <el-dialog :title="title" :visible.sync="editVisible" width="30%">
       <el-form ref="form" :model="form" label-width="100px">
-        <!-- <el-form-item label="登录名" prop="login_name" v-show= "form.opType == 'create'">
-                    <el-input v-model.trim="form.login_name"></el-input>
-                </el-form-item>
-                <el-form-item label="密码" prop="password" v-show="form.opType=='create'">
-                    <el-input type='password' v-model.trim="form.password"></el-input>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="password_reconfig" v-show="form.opType=='create'">
-                    <el-input type='password' v-model.trim="form.password_reconfig"></el-input>
-        </el-form-item>-->
         <el-form-item label="姓名" prop="real_name">
           <el-input v-model.trim="form.real_name"></el-input>
         </el-form-item>
@@ -187,7 +178,7 @@ export default {
       this.filter["page"] = this.cur_page;
       this.filter["size"] = 10;
       this.filter.gender = this.genderText2Enum[this.filter.gender_text];
-      let res = await utils.simplePost("/teacher/filter", this.filter, true);
+      let res = await utils.simplePost("/dean/teacher/filter", this.filter, true);
       if (res.code === 0) {
         this.tableData = res.data.list;
         this.total = res.data.total;
@@ -196,7 +187,7 @@ export default {
       }
     },
     async getSubject() {
-      let res = await utils.simpleGet("/subject/list", {}, true);
+      let res = await utils.simpleGet("/dean/subject/list", {}, true);
       if (res.code === 0) {
         this.subject_list = res.data;
         this.subjectMap = this.subject_list.reduce(function(map, obj) {
@@ -244,7 +235,7 @@ export default {
       this.title = "编辑";
       this.editVisible = true;
       let res = await utils.simpleGet(
-        "/teacher/info/" + this.tableData[index].teacher_id,
+        "/dean/teacher/info/" + this.tableData[index].teacher_id,
         {},
         true
       );
@@ -314,7 +305,7 @@ export default {
         return;
       }
       if (opType == "edit") {
-        let res = await utils.simplePost("/teacher/modify", this.form, true);
+        let res = await utils.simplePost("/dean/teacher/modify", this.form, true);
         if (res.code == 0) {
           this.$message.success("修改成功");
         } else {
@@ -322,7 +313,7 @@ export default {
           return;
         }
       } else if (opType == "create") {
-        let res = await utils.simplePost("/teacher/add", this.form, true);
+        let res = await utils.simplePost("/dean/teacher/add", this.form, true);
         if (res.code === 0) {
           this.$message.success("添加成功");
         } else {
@@ -336,7 +327,7 @@ export default {
     async deleteRow() {
       let id = this.tableData[this.idx].teacher_id;
       let res = await utils.simplePost(
-        "/teacher/delete",
+        "/dean/teacher/delete",
         { id_list: [id] },
         true
       );
@@ -358,7 +349,7 @@ export default {
         return;
       }
       let res = await utils.simplePost(
-        "/teacher/delete",
+        "/dean/teacher/delete",
         { id_list: ids },
         true
       );

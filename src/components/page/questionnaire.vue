@@ -140,7 +140,7 @@ export default {
     // 获取 easy-mock 的模拟数据
     async getData() {
       let res = await utils.simplePost(
-        "/questionnaire/filter",
+        "/dean/questionnaire/edit/filter",
         this.filter,
         true
       );

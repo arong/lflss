@@ -7,7 +7,12 @@
             <el-input v-model.trim="loginForm.login_name" placeholder="登录名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginForm.password" type="password" @keyup.enter="fakeLogin('loginForm')" placeholder="密码"></el-input>
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              @keyup.enter="fakeLogin('loginForm')"
+              placeholder="密码"
+            ></el-input>
           </el-form-item>
           <el-form-item style="text-align:center">
             <el-button type="primary" class="submit_btn" @click="fakeLogin('loginForm')">登录</el-button>
@@ -20,6 +25,8 @@
 
 <script>
 import utils from "@/utils/index.js";
+// import sha256 from "js-sha256";
+// var SHA256 = require("crypto-js/sha256");
 export default {
   name: "login",
   data: function() {
@@ -38,18 +45,25 @@ export default {
   },
   methods: {
     fakeLogin(loginForm) {
-      this.$refs[loginForm].validate(async (valid) => {
+      this.$refs[loginForm].validate(async valid => {
         if (valid) {
+          let sha256 = require("js-sha256").sha256; //引入sha256库
+          let hash = sha256(this.loginForm.password); //hash为加密后的密码
+          console.log(hash);
           let res = await utils.simplePost(
             "/auth/login",
-            { login_name: this.loginForm.login_name, password: this.loginForm.password },
+            {
+              login_name: this.loginForm.login_name,
+              password: hash,
+              type: 2,
+            },
             true
           );
           if (res.code != 0) {
-            this.$message.error(res.msg)
+            this.$message.error(res.msg);
             return false;
           }
-          sessionStorage.setItem("login_name", this.loginForm.login_name)
+          sessionStorage.setItem("login_name", this.loginForm.login_name);
           sessionStorage.setItem("token", res.data);
           this.$router.push("/");
           return true;
