@@ -25,8 +25,6 @@
 
 <script>
 import utils from "@/utils/index.js";
-// import sha256 from "js-sha256";
-// var SHA256 = require("crypto-js/sha256");
 export default {
   name: "login",
   data: function() {
@@ -64,7 +62,7 @@ export default {
             return false;
           }
           sessionStorage.setItem("login_name", this.loginForm.login_name);
-          sessionStorage.setItem("token", res.data);
+          sessionStorage.setItem("token", res.data.token);
           this.$router.push("/");
           return true;
         } else {

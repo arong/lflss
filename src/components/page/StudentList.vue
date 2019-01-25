@@ -9,7 +9,7 @@
     </div>
     <div class="container">
       <div class="handle-box">
-        <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+        <el-button type="primary" icon="delete" class="handle-del mr10" @click="delList">批量删除</el-button>
         <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
         <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input>
         <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input>
@@ -24,8 +24,8 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
-        <el-table-column prop="real_name" label="姓名" width="120"></el-table-column>
-        <el-table-column prop="gender" label="性别" width="120"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="gender_text" label="性别" width="120"></el-table-column>
         <el-table-column prop="class" label="班级" width="120"></el-table-column>
         <el-table-column prop="address" label="家庭地址" :formatter="formatter"></el-table-column>
         <el-table-column prop="date" label="日期" sortable width="150"></el-table-column>
@@ -59,7 +59,7 @@
     <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="姓名">
-          <el-input v-model.trim="form.real_name"></el-input>
+          <el-input v-model.trim="form.name"></el-input>
         </el-form-item>
         <el-form-item label="性别">
           <el-select v-model.trim="form.gender" placeholder="请选择" class="handle-select mr10">
@@ -132,6 +132,10 @@ export default {
       idx: -1,
       filter: { grade: 1, index: 1 },
       total: 0,
+      genderMap:{
+        1:'男',
+        2: '女'
+      },
       class_list: []
     };
   },
@@ -155,7 +159,6 @@ export default {
           map[obj.id] = obj.name;
           return map;
         }, {});
-        // console.log(this.class_map)
       } else {
         this.class_list = [];
       }
@@ -163,7 +166,7 @@ export default {
     },
     async getData() {
       let res = await utils.simplePost(
-        "/dean/student/list",
+        "/dean/student/filter",
         { page: this.cur_page, size: 10, ...this.filter },
         true
       );
@@ -171,10 +174,7 @@ export default {
         if (typeof res.data.list != "undefined" || res.data.list.length > 0) {
           var list = res.data.list;
           for (var i = 0; i < list.length; i++) {
-            var curr = list[i];
-            if (curr.class_id != 0) {
-              curr.class = this.class_map[curr.class_id];
-            }
+            list[i].gender_text = this.genderMap[list[i].gender]
           }
         }
         this.tableData = res.data.list;
@@ -213,28 +213,41 @@ export default {
     },
     async handleDelete(index, row) {
       var id = this.tableData[index].student_id;
-      let res = await utils.simplePost("/dean/student/delete", { id: id }, true);
+      let res = await utils.simplePost("/dean/student/delete", { id_list: [id] }, true);
       if (res.code === 0) {
         this.$message.success("删除成功");
       } else {
         this.$message.error("删除失败");
       }
+      this.delVisible = false;
+      this.getData()
     },
-    delAll() {
-      const length = this.multipleSelection.length;
-      let str = "";
-      this.del_list = this.del_list.concat(this.multipleSelection);
-      for (let i = 0; i < length; i++) {
-        str += this.multipleSelection[i].name + " ";
+    async delList() {
+      let ids = [];
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        ids.push(this.multipleSelection[i].student_id);
       }
-      this.$message.error("删除了" + str);
-      this.multipleSelection = [];
+      if (ids.length == 0) {
+        return;
+      }
+      let res = await utils.simplePost(
+        "/dean/student/delete",
+        { id_list: ids },
+        true
+      );
+      if (res.code === 0) {
+        this.$message.success("删除成功");
+      } else {
+        this.$message.error(res.msg);
+        return;
+      }
+      this.getData();
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     checkData(form) {
-      if (!form.real_name) {
+      if (!form.name) {
         this.$message.error("名字为必填项");
         return false;
       }

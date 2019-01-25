@@ -33,21 +33,22 @@
           <template slot-scope="scope">
             <el-button
               type="text"
-              icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
-            >编辑</el-button>
+            >设置</el-button>
             <el-button
               type="text"
-              icon="el-icon-delete"
               class="red"
               @click="handleDelete(scope.$index, scope.row)"
             >删除</el-button>
             <el-button
               type="text"
-              icon="el-icon-delete"
               class="red"
               @click="handleDelete(scope.$index, scope.row)"
             >查看问卷</el-button>
+            <el-button
+              type="text"
+              @click="handleEdit(scope.$index, scope.row)"
+            >编辑问卷</el-button>
             <el-button
               type="text"
               icon="el-icon-delete"

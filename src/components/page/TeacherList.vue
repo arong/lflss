@@ -15,8 +15,6 @@
           <el-option key="1" label="男" value="男"></el-option>
           <el-option key="2" label="女" value="女"></el-option>
         </el-select>
-        <!-- <el-input v-model="filter.grade" placeholder="年级" class="handle-select mr10"></el-input> -->
-        <!-- <el-input v-model="filter.index" placeholder="班级" class="handle-select mr10"></el-input> -->
         <el-input v-model="filter.name" placeholder="姓名" class="handle-select mr10"></el-input>
         <el-input v-model="filter.mobile" placeholder="手机号" class="handle-input"></el-input>
         <el-button type="primary" icon="search" @click="resetSearch">重置</el-button>

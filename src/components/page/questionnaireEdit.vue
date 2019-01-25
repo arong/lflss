@@ -49,6 +49,8 @@
                   <div v-for="(option, i) in item.options" :key="i">
                     <el-radio class="option" :label="i">
                       <el-input type="text" v-model="option.option"></el-input>
+                      <i class="el-icon-lx-roundadd"></i>
+                      <i class="el-icon-lx-roundclose"></i>
                     </el-radio>
                   </div>
                 </el-radio-group>
@@ -69,6 +71,8 @@
                   <div v-for="(option, i) in item.options" :key="i">
                     <el-checkbox :label="i" class="option">
                       <el-input type="text" v-model="option.option"></el-input>
+                      <i class="el-icon-lx-roundadd"></i>
+                      <i class="el-icon-lx-roundclose"></i>
                     </el-checkbox>
                   </div>
                 </el-checkbox-group>
@@ -102,7 +106,7 @@
                 <el-button type="text" @click="handleSaveEdit(index)">保存编辑</el-button>
               </template>
               <template v-else>
-                <el-button type="text" @click="handleStartEdit(index)">编辑</el-button>                
+                <el-button type="text" @click="handleStartEdit(index)">编辑</el-button>
               </template>
             </div>
           </el-col>
@@ -179,7 +183,7 @@ export default {
     handleCopyItem(item, i) {
       console.log(item);
       console.log(i);
-      
+
     },
     handleDeleteItem(i) {
       this.questionnaire.questions = (this.questionnaire.questions || []).filter((item, index) => index !== i);
